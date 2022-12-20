@@ -52,6 +52,35 @@
 // console.log(+(2.7).toFixed(3));
 // console.log(+(2.345).toFixed(1)); //2.35
 
+// // ////////////////////////////////////////////////////
+
+// //Remainder operator:
+// console.log(5 % 2);
+
+// console.log(5 / 2);
+
+// console.log(8 % 3);
+// // Używa się dla sprawdzenia parzystych / nieparzystych liczb
+
+// console.log(6 % 2); // 0  - parzyste
+// console.log(9 % 2); //> 0 nieparzyste(ma końcówkę z dzielenia)
+
+// const isEven = n => n % 2 === 0;
+
+// console.log(isEven(8));
+
+// console.log(isEven(23));
+
+// console.log(isEven(51));
+
+// labelBalance.addEventListener('click', () => {
+//   [...document.querySelectorAll('.movements__row')].forEach((row, i) => {
+//     if (i % 2 === 0) row.style.backgroundColor = 'orangered';
+//     if (i % 3 === 0) row.style.backgroundColor = 'blue';
+//   });
+// });
+// // Jeśli potrzebujemy żyć czegoś N ilość razy, to używany tego
+
 /////////////////////////////////////////////////
 
 // BANKIST APP
@@ -346,34 +375,22 @@ btnSort.addEventListener('click', e => {
 // /////////////////////////////////
 
 // // ////////////////////////////////////////////////////
+// Numeric Separators  (_)
 
-//
+// 287,460,000,000
+const diameter = 287_460_000_000;
+console.log(diameter);
 
-// // ////////////////////////////////////////////////////
+const priceCents = 345_99;
+console.log(priceCents);
 
-//Remainder operator:
-console.log(5 % 2);
+const transferFee = 15_00;
 
-console.log(5 / 2);
+const transferFee2 = 1_500;
 
-console.log(8 % 3);
-// Używa się dla sprawdzenia parzystych / nieparzystych liczb
+const PI = 3.14_15;
+console.log(PI);
 
-console.log(6 % 2); // 0  - parzyste
-console.log(9 % 2); //> 0 nieparzyste(ma końcówkę z dzielenia)
-
-const isEven = n => n % 2 === 0;
-
-console.log(isEven(8));
-
-console.log(isEven(23));
-
-console.log(isEven(51));
-
-labelBalance.addEventListener('click', () => {
-  [...document.querySelectorAll('.movements__row')].forEach((row, i) => {
-    if (i % 2 === 0) row.style.backgroundColor = 'orangered';
-    if (i % 3 === 0) row.style.backgroundColor = 'blue';
-  });
-});
-// Jeśli potrzebujemy żyć czegoś N ilość razy, to używany tego
+console.log(Number('23000'));
+console.log(Number('23_000')); //NaN
+console.log(parseInt('23_000')); //23
