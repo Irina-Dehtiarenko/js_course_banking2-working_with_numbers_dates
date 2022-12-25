@@ -80,6 +80,26 @@
 //   });
 // });
 // // Jeśli potrzebujemy żyć czegoś N ilość razy, to używany tego
+// // ////////////////////////////////////////////////////
+// // Numeric Separators  (_)
+
+// // 287,460,000,000
+// const diameter = 287_460_000_000;
+// console.log(diameter);
+
+// const priceCents = 345_99;
+// console.log(priceCents);
+
+// const transferFee = 15_00;
+
+// const transferFee2 = 1_500;
+
+// const PI = 3.14_15;
+// console.log(PI);
+
+// console.log(Number('23000'));
+// console.log(Number('23_000')); //NaN
+// console.log(parseInt('23_000')); //23
 
 /////////////////////////////////////////////////
 
@@ -374,23 +394,37 @@ btnSort.addEventListener('click', e => {
 
 // /////////////////////////////////
 
-// // ////////////////////////////////////////////////////
-// Numeric Separators  (_)
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// 287,460,000,000
-const diameter = 287_460_000_000;
-console.log(diameter);
+// BigInt
 
-const priceCents = 345_99;
-console.log(priceCents);
+console.log(2 ** 53 - 1); //największa liczba, którą JS może przedstawić(64 bita, ale 53 używane dla przechowywania liczb(-1 bo zaczyna się od zera))
+//9007199254740991 - ważna liczba, jest przechowywana w Number.MAX_SAVE_INTEGER
 
-const transferFee = 15_00;
+console.log(Number.MAX_SAFE_INTEGER);
+// jeśli będziemy pracować z liczbami większymi za tę, to możemy wejść w błąd
 
-const transferFee2 = 1_500;
+// console.log(456654564684163846541684168466868); - nie można
 
-const PI = 3.14_15;
-console.log(PI);
+console.log(456654564684163846541684168466868n); //BigInt
 
-console.log(Number('23000'));
-console.log(Number('23_000')); //NaN
-console.log(parseInt('23_000')); //23
+// Operations
+console.log(10000n + 10000n); //20000n
+console.log(6541654658436514681452n * 3313151365n);
+// console.log(Math.sqrt(16n)); //Cannot convert a BigInt value to a number at Math.sqrt
+
+const huge = 222222222254666666666n;
+const num = 23;
+// console.log(huge*num) - nie pożna połączyć INT ze zwykłą liczbą
+console.log(huge * BigInt(num)); //It works
+
+// Exceptions
+console.log(20n > 15); //true
+console.log(20n === 20); //false - różne primitive types
+console.log(typeof 20n); //bigint
+console.log(20n == 20); //true
+
+console.log(huge + ' ' + 'is REALLY big'); //konwertuje "huge" na string
+
+// Divitiond
+console.log(10n / 3n); //3n - zwraca najbliższą liczbę, zaokrągla do całej liczby
