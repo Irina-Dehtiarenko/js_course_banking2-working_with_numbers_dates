@@ -101,6 +101,40 @@
 // console.log(Number('23_000')); //NaN
 // console.log(parseInt('23_000')); //23
 
+////////////////////////////////////////////////////////
+// BigInt
+
+// console.log(2 ** 53 - 1); //największa liczba, którą JS może przedstawić(64 bita, ale 53 używane dla przechowywania liczb(-1 bo zaczyna się od zera))
+// //9007199254740991 - ważna liczba, jest przechowywana w Number.MAX_SAVE_INTEGER
+
+// console.log(Number.MAX_SAFE_INTEGER);
+// // jeśli będziemy pracować z liczbami większymi za tę, to możemy wejść w błąd
+
+// // console.log(456654564684163846541684168466868); - nie można
+
+// console.log(456654564684163846541684168466868n); //BigInt
+
+// // Operations
+// console.log(10000n + 10000n); //20000n
+// console.log(6541654658436514681452n * 3313151365n);
+// // console.log(Math.sqrt(16n)); //Cannot convert a BigInt value to a number at Math.sqrt
+
+// const huge = 222222222254666666666n;
+// const num = 23;
+// // console.log(huge*num) - nie pożna połączyć INT ze zwykłą liczbą
+// console.log(huge * BigInt(num)); //It works
+
+// // Exceptions
+// console.log(20n > 15); //true
+// console.log(20n === 20); //false - różne primitive types
+// console.log(typeof 20n); //bigint
+// console.log(20n == 20); //true
+
+// console.log(huge + ' ' + 'is REALLY big'); //konwertuje "huge" na string
+
+// // Divitiond
+// console.log(10n / 3n); //3n - zwraca najbliższą liczbę, zaokrągla do całej liczby
+
 /////////////////////////////////////////////////
 
 // BANKIST APP
@@ -396,35 +430,52 @@ btnSort.addEventListener('click', e => {
 
 // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// BigInt
+//Creating dates
 
-console.log(2 ** 53 - 1); //największa liczba, którą JS może przedstawić(64 bita, ale 53 używane dla przechowywania liczb(-1 bo zaczyna się od zera))
-//9007199254740991 - ważna liczba, jest przechowywana w Number.MAX_SAVE_INTEGER
+// Create a date
+// 1.
+const now = new Date();
+console.log(now);
+// 2.
+console.log(new Date('Dec 25 2022 14:28:49')); //tworzy Date na podstawie czasu podanego w string
 
-console.log(Number.MAX_SAFE_INTEGER);
-// jeśli będziemy pracować z liczbami większymi za tę, to możemy wejść w błąd
+console.log(new Date('December 24, 2015')); //Thu Dec 24 2015 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)
 
-// console.log(456654564684163846541684168466868); - nie można
+console.log(account1);
+console.log(new Date('2019-11-18T21:31:17.178Z')); //Mon Nov 18 2019 22:31:17 GMT+0100 (czas środkowoeuropejski standardowy), to Z na końcu znaczy UTC
+console.log(new Date(account1.movementsDates[0])); // to samo
 
-console.log(456654564684163846541684168466868n); //BigInt
+// 3.
+console.log(new Date(2037, 10, 19, 15, 23, 5)); //Thu Nov 19 2037 15:23:05 GMT+0100 (czas środkowoeuropejski standardowy)
+// Czyli new Date(rok, miesiąc(JS liczy od zera 0 - January), dzień, godzina, minuty, sekundy )
 
-// Operations
-console.log(10000n + 10000n); //20000n
-console.log(6541654658436514681452n * 3313151365n);
-// console.log(Math.sqrt(16n)); //Cannot convert a BigInt value to a number at Math.sqrt
+console.log(new Date(2037, 10, 31, 15, 23, 5)); //Tue Dec 01 2037 15:23:05 GMT+0100 (czas środkowoeuropejski standardowy)  - dlatego,że November ma 30dni, znaczy 31 === 1 December
 
-const huge = 222222222254666666666n;
-const num = 23;
-// console.log(huge*num) - nie pożna połączyć INT ze zwykłą liczbą
-console.log(huge * BigInt(num)); //It works
+// 4.
+console.log(new Date(0)); //Thu Jan 01 1970 01:00:00 GMT+0100 (czas środkowoeuropejski standardowy) - jakiś typu czas początkowy
+console.log(new Date(3 * 24 * 60 * 60 * 1000)); //trzeci dzień od początku - convertingdate to milisecunds(3dni* 24godziny *60min *60sec*1000milisec) : Sun Jan 04 1970 01:00:00 GMT+0100 (czas środkowoeuropejski standardowy)
 
-// Exceptions
-console.log(20n > 15); //true
-console.log(20n === 20); //false - różne primitive types
-console.log(typeof 20n); //bigint
-console.log(20n == 20); //true
+// Working with dates
+const future = new Date(2037, 10, 19, 15, 23);
+console.log(future);
+console.log(future.getFullYear()); //2037
+console.log(future.getMonth());
+console.log(future.getDate()); //dzień
+console.log(future.getDay()); //dzień tygodnia(3)
+console.log(future.getHours());
+console.log(future.getMinutes());
+console.log(future.getSeconds());
 
-console.log(huge + ' ' + 'is REALLY big'); //konwertuje "huge" na string
+console.log(future.toISOString()); //zwraca string w formacie ISO:  2037-11-19T14:23:00.000Z
 
-// Divitiond
-console.log(10n / 3n); //3n - zwraca najbliższą liczbę, zaokrągla do całej liczby
+console.log(future.getTime()); //2142253380000
+
+console.log(new Date(2142253380000)); //Thu Nov 19 2037 15:23:00 GMT+0100 (czas środkowoeuropejski standardowy)
+
+console.log(Date.now()); //currently date w milisekundach
+console.log(new Date(Date.now())); //Sun Dec 25 2022 14:56:36 GMT+0100 (czas środkowoeuropejski standardowy)
+
+future.setFullYear(2040); //zmienia obecny rok
+console.log(future); //Mon Nov 19 2040 15:23:00 GMT+0100 (czas środkowoeuropejski standardowy)
+future.setMonth(5);
+console.log(future); //Tue Jun 19 2040 15:23:00 GMT+0200 (czas środkowoeuropejski letni)
