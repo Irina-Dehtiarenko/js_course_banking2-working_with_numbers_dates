@@ -135,6 +135,58 @@
 // // Divitiond
 // console.log(10n / 3n); //3n - zwraca najbliższą liczbę, zaokrągla do całej liczby
 
+///////////////////////////////////////////////////////
+
+// //Creating dates
+
+// // Create a date
+// // 1.
+// const now = new Date();
+// console.log(now);
+// // 2.
+// console.log(new Date('Dec 25 2022 14:28:49')); //tworzy Date na podstawie czasu podanego w string
+
+// console.log(new Date('December 24, 2015')); //Thu Dec 24 2015 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)
+
+// console.log(account1);
+// console.log(new Date('2019-11-18T21:31:17.178Z')); //Mon Nov 18 2019 22:31:17 GMT+0100 (czas środkowoeuropejski standardowy), to Z na końcu znaczy UTC
+// console.log(new Date(account1.movementsDates[0])); // to samo
+
+// // 3.
+// console.log(new Date(2037, 10, 19, 15, 23, 5)); //Thu Nov 19 2037 15:23:05 GMT+0100 (czas środkowoeuropejski standardowy)
+// // Czyli new Date(rok, miesiąc(JS liczy od zera 0 - January), dzień, godzina, minuty, sekundy )
+
+// console.log(new Date(2037, 10, 31, 15, 23, 5)); //Tue Dec 01 2037 15:23:05 GMT+0100 (czas środkowoeuropejski standardowy)  - dlatego,że November ma 30dni, znaczy 31 === 1 December
+
+// // 4.
+// console.log(new Date(0)); //Thu Jan 01 1970 01:00:00 GMT+0100 (czas środkowoeuropejski standardowy) - jakiś typu czas początkowy
+// console.log(new Date(3 * 24 * 60 * 60 * 1000)); //trzeci dzień od początku - convertingdate to milisecunds(3dni* 24godziny *60min *60sec*1000milisec) : Sun Jan 04 1970 01:00:00 GMT+0100 (czas środkowoeuropejski standardowy)
+
+// // Working with dates
+// const future = new Date(2037, 10, 19, 15, 23);
+// console.log(future);
+// console.log(future.getFullYear()); //2037
+// console.log(future.getMonth());
+// console.log(future.getDate()); //dzień
+// console.log(future.getDay()); //dzień tygodnia(3)
+// console.log(future.getHours());
+// console.log(future.getMinutes());
+// console.log(future.getSeconds());
+
+// console.log(future.toISOString()); //zwraca string w formacie ISO:  2037-11-19T14:23:00.000Z
+
+// console.log(future.getTime()); //2142253380000
+
+// console.log(new Date(2142253380000)); //Thu Nov 19 2037 15:23:00 GMT+0100 (czas środkowoeuropejski standardowy)
+
+// console.log(Date.now()); //currently date w milisekundach
+// console.log(new Date(Date.now())); //Sun Dec 25 2022 14:56:36 GMT+0100 (czas środkowoeuropejski standardowy)
+
+// future.setFullYear(2040); //zmienia obecny rok
+// console.log(future); //Mon Nov 19 2040 15:23:00 GMT+0100 (czas środkowoeuropejski standardowy)
+// future.setMonth(5);
+// console.log(future); //Tue Jun 19 2040 15:23:00 GMT+0200 (czas środkowoeuropejski letni)
+
 /////////////////////////////////////////////////
 
 // BANKIST APP
@@ -251,20 +303,30 @@ const currencies = new Map([
   ['GBP', 'Pound sterling'],
 ]);
 
-const displayMovements = (movements, sort = false) => {
+const displayMovements = (acc, sort = false) => {
   containerMovements.innerHTML = '';
 
   // implementing sorting
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const movs = sort
+    ? acc.movements.slice().sort((a, b) => a - b)
+    : acc.movements;
 
   movs.forEach((mov, i) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
+    const date = new Date(acc.movementsDates[i]);
+
+    const day = `${date.getDate()}`.padStart(2, 0);
+    const month = `${date.getMonth() + 1}`.padStart(2, 0);
+    const year = date.getFullYear();
+
+    const displayDate = `${day}/${month}/${year}`;
 
     const html = `
     <div class="movements__row">
       <div class="movements__type movements__type--${type}">
        ${i + 1} ${type}
       </div>
+      <div class="movements__date">${displayDate}</div>
       <div class="movements__value">${mov.toFixed(2)}€</div>
     </div>`;
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -308,7 +370,7 @@ createUserNames(accounts);
 
 const updateUI = acc => {
   // Display movements
-  displayMovements(acc.movements);
+  displayMovements(acc);
 
   // display balance
   calcAndDisplayBalance(acc);
@@ -318,6 +380,17 @@ const updateUI = acc => {
 };
 
 let currentAccount;
+
+// FAKE ALWAYS LOGGED IN
+
+currentAccount = account1;
+updateUI(currentAccount);
+containerApp.style.opacity = '1';
+labelWelcome.textContent = `Welcome back, ${
+  currentAccount.owner.split(' ')[0]
+}`;
+
+// day/month/year
 
 const clearInputFields = () => {
   // Clear input fields
@@ -342,6 +415,15 @@ btnLogin.addEventListener('click', e => {
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(' ')[0]
     }`;
+
+    // Create current date and time
+    const now = new Date();
+    const day = `${now.getDate()}`.padStart(2, 0);
+    const month = `${now.getMonth() + 1}`.padStart(2, 0);
+    const year = now.getFullYear();
+    const hour = `${now.getHours()}`.padStart(2, 0);
+    const min = `${now.getMinutes()}`.padStart(2, 0);
+    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`;
     // Clear input fields
 
     containerApp.style.opacity = '100';
@@ -372,6 +454,10 @@ btnTransfer.addEventListener('click', e => {
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
 
+    // Add transfer date
+    currentAccount.movementsDates.push(new Date().toISOString());
+    receiverAcc.movementsDates.push(new Date().toISOString());
+
     // Update UI
     updateUI(currentAccount);
   }
@@ -385,6 +471,9 @@ btnLoan.addEventListener('click', e => {
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
     currentAccount.movements.push(amount);
+
+    // Add loan date
+    currentAccount.movementsDates.push(new Date().toISOString());
 
     // Update UI
     updateUI(currentAccount);
@@ -422,60 +511,10 @@ let sorted = false;
 
 btnSort.addEventListener('click', e => {
   e.preventDefault();
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
 
 // /////////////////////////////////
 
-// ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//Creating dates
-
-// Create a date
-// 1.
-const now = new Date();
-console.log(now);
-// 2.
-console.log(new Date('Dec 25 2022 14:28:49')); //tworzy Date na podstawie czasu podanego w string
-
-console.log(new Date('December 24, 2015')); //Thu Dec 24 2015 00:00:00 GMT+0100 (czas środkowoeuropejski standardowy)
-
-console.log(account1);
-console.log(new Date('2019-11-18T21:31:17.178Z')); //Mon Nov 18 2019 22:31:17 GMT+0100 (czas środkowoeuropejski standardowy), to Z na końcu znaczy UTC
-console.log(new Date(account1.movementsDates[0])); // to samo
-
-// 3.
-console.log(new Date(2037, 10, 19, 15, 23, 5)); //Thu Nov 19 2037 15:23:05 GMT+0100 (czas środkowoeuropejski standardowy)
-// Czyli new Date(rok, miesiąc(JS liczy od zera 0 - January), dzień, godzina, minuty, sekundy )
-
-console.log(new Date(2037, 10, 31, 15, 23, 5)); //Tue Dec 01 2037 15:23:05 GMT+0100 (czas środkowoeuropejski standardowy)  - dlatego,że November ma 30dni, znaczy 31 === 1 December
-
-// 4.
-console.log(new Date(0)); //Thu Jan 01 1970 01:00:00 GMT+0100 (czas środkowoeuropejski standardowy) - jakiś typu czas początkowy
-console.log(new Date(3 * 24 * 60 * 60 * 1000)); //trzeci dzień od początku - convertingdate to milisecunds(3dni* 24godziny *60min *60sec*1000milisec) : Sun Jan 04 1970 01:00:00 GMT+0100 (czas środkowoeuropejski standardowy)
-
-// Working with dates
-const future = new Date(2037, 10, 19, 15, 23);
-console.log(future);
-console.log(future.getFullYear()); //2037
-console.log(future.getMonth());
-console.log(future.getDate()); //dzień
-console.log(future.getDay()); //dzień tygodnia(3)
-console.log(future.getHours());
-console.log(future.getMinutes());
-console.log(future.getSeconds());
-
-console.log(future.toISOString()); //zwraca string w formacie ISO:  2037-11-19T14:23:00.000Z
-
-console.log(future.getTime()); //2142253380000
-
-console.log(new Date(2142253380000)); //Thu Nov 19 2037 15:23:00 GMT+0100 (czas środkowoeuropejski standardowy)
-
-console.log(Date.now()); //currently date w milisekundach
-console.log(new Date(Date.now())); //Sun Dec 25 2022 14:56:36 GMT+0100 (czas środkowoeuropejski standardowy)
-
-future.setFullYear(2040); //zmienia obecny rok
-console.log(future); //Mon Nov 19 2040 15:23:00 GMT+0100 (czas środkowoeuropejski standardowy)
-future.setMonth(5);
-console.log(future); //Tue Jun 19 2040 15:23:00 GMT+0200 (czas środkowoeuropejski letni)
+// // ////////////////////////////////////////////////////
