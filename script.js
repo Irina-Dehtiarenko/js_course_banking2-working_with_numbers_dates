@@ -187,6 +187,20 @@
 // future.setMonth(5);
 // console.log(future); //Tue Jun 19 2040 15:23:00 GMT+0200 (czas środkowoeuropejski letni)
 
+// // ////////////////////////////////////////////////////
+// Operations with dates
+
+// const future = new Date(2027, 10, 19, 15, 23);
+// console.log(+future);
+
+// const calcDaysPassed = (date1, date2) =>
+//   Math.abs(date2 - date1) / (1000 * 60 * 60 * 24);
+
+// const days1 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 24));
+// console.log(days1);
+// const days2 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 4));
+// console.log(days2);
+
 /////////////////////////////////////////////////
 
 // BANKIST APP
@@ -322,6 +336,13 @@ const formatMovementDate = (date, locale) => {
   return new Intl.DateTimeFormat(locale).format(date);
 };
 
+const formatCur = (value, locale, currency) => {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
+
 const displayMovements = (acc, sort = false) => {
   containerMovements.innerHTML = '';
 
@@ -336,13 +357,15 @@ const displayMovements = (acc, sort = false) => {
     const date = new Date(acc.movementsDates[i]);
     const displayDate = formatMovementDate(date, acc.locale);
 
+    const formattedMov = formatCur(mov, acc.locale, acc.currency);
+
     const html = `
     <div class="movements__row">
       <div class="movements__type movements__type--${type}">
        ${i + 1} ${type}
       </div>
       <div class="movements__date">${displayDate}</div>
-      <div class="movements__value">${mov.toFixed(2)}€</div>
+      <div class="movements__value">${formattedMov}</div>
     </div>`;
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
@@ -350,25 +373,27 @@ const displayMovements = (acc, sort = false) => {
 
 const calcAndDisplayBalance = acc => {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
+
+  labelBalance.textContent = formatCur(acc.balance, acc.locale, acc.currency);
 };
 
 const calcDisplaySummary = acc => {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
+  labelSumIn.textContent = formatCur(incomes, acc.locale, acc.currency);
 
   const outcomes = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(outcomes.toFixed(2))}€`;
+  labelSumOut.textContent = formatCur(outcomes, acc.locale, acc.currency);
+
   const interest = acc.movements
     .filter(mov => mov > 0)
     .map(dep => (dep * acc.interestRate) / 100)
     .filter(int => int >= 1)
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  labelSumInterest.textContent = formatCur(interest, acc.locale, acc.currency);
 };
 
 const createUserNames = accs => {
@@ -558,18 +583,24 @@ btnSort.addEventListener('click', e => {
   sorted = !sorted;
 });
 
-// /////////////////////////////////
+// //////////////////////////////////////////////////////////////
+///////////////////////////////////
+// Internationalizing numbers
+const num = 3698456.23;
 
-// // ////////////////////////////////////////////////////
-// Operations with dates
+const options = {
+  style: 'currency', //percent//unit
+  unit: 'celsius', //mile-per-hour
+  currency: 'EUR', //"UAH"
+  // useGrouping:false
+};
 
-const future = new Date(2027, 10, 19, 15, 23);
-console.log(+future);
+console.log('US', new Intl.NumberFormat('en-US', options).format(num)); //US //€//3,698,456.23 mph
+console.log('Ukraine', new Intl.NumberFormat('uk-UA', options).format(num)); //Ukraine 3 698 456,23 EUR//°C// милі/год
+console.log('German', new Intl.NumberFormat('de-DE', options).format(num)); //German 3.698.456,23 €//°C // mi/h
+console.log('Syria   ', new Intl.NumberFormat('ar-SY', options).format(num)); //Syria    ٣٬٦٩٨٬٤٥٦٫٢٣ ميل/س
 
-const calcDaysPassed = (date1, date2) =>
-  Math.abs(date2 - date1) / (1000 * 60 * 60 * 24);
-
-const days1 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 24));
-console.log(days1);
-const days2 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 4));
-console.log(days2);
+console.log(
+  navigator.language,
+  new Intl.NumberFormat(navigator.language, options).format(num)
+); //pl-PL 3 698 456,23 C //mili/h
