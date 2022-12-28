@@ -303,7 +303,7 @@ const currencies = new Map([
   ['GBP', 'Pound sterling'],
 ]);
 
-const formatMovementDate = date => {
+const formatMovementDate = (date, locale) => {
   const calcDaysPassed = (date1, date2) =>
     Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
 
@@ -314,11 +314,12 @@ const formatMovementDate = date => {
   if (daysPassed === 1) return 'Yesterday';
   if (daysPassed <= 7) return `${daysPassed} days ago`;
 
-  const day = `${date.getDate()}`.padStart(2, 0);
-  const month = `${date.getMonth() + 1}`.padStart(2, 0);
-  const year = date.getFullYear();
+  // const day = `${date.getDate()}`.padStart(2, 0);
+  // const month = `${date.getMonth() + 1}`.padStart(2, 0);
+  // const year = date.getFullYear();
 
-  return `${day}/${month}/${year}`;
+  // return `${day}/${month}/${year}`;
+  return new Intl.DateTimeFormat(locale).format(date);
 };
 
 const displayMovements = (acc, sort = false) => {
@@ -333,7 +334,7 @@ const displayMovements = (acc, sort = false) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
 
     const date = new Date(acc.movementsDates[i]);
-    const displayDate = formatMovementDate(date);
+    const displayDate = formatMovementDate(date, acc.locale);
 
     const html = `
     <div class="movements__row">
@@ -406,6 +407,8 @@ labelWelcome.textContent = `Welcome back, ${
 
 // day/month/year
 
+// As of Wednesday, 28 December 2022 at 17:29
+
 const clearInputFields = () => {
   // Clear input fields
   labelWelcome.textContent = 'Log in to get started';
@@ -431,13 +434,39 @@ btnLogin.addEventListener('click', e => {
     }`;
 
     // Create current date and time
+    // const now = new Date();
+    // const day = `${now.getDate()}`.padStart(2, 0);
+    // const month = `${now.getMonth() + 1}`.padStart(2, 0);
+    // const year = now.getFullYear();
+    // const hour = `${now.getHours()}`.padStart(2, 0);
+    // const min = `${now.getMinutes()}`.padStart(2, 0);
+    // labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`;
+
+    // Experimenting Api
     const now = new Date();
-    const day = `${now.getDate()}`.padStart(2, 0);
-    const month = `${now.getMonth() + 1}`.padStart(2, 0);
-    const year = now.getFullYear();
-    const hour = `${now.getHours()}`.padStart(2, 0);
-    const min = `${now.getMinutes()}`.padStart(2, 0);
-    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`;
+    const options = {
+      hour: 'numeric',
+      minute: 'numeric',
+      day: 'numeric',
+      month: 'numeric', //"long", "2-digit"
+      year: 'numeric', //'2-digit
+      weekday: 'long', //nazwa dnia tygodnia
+    };
+
+    // Ustawienie języka za pomocą domyślnego języka:
+
+    // const locale = navigator.language;
+    // console.log(locale);
+
+    // labelDate.textContent = new Intl.DateTimeFormat('uk-UA').format(now);
+    // labelDate.textContent = new Intl.DateTimeFormat('pl-PL').format(now);
+    // labelDate.textContent = new Intl.DateTimeFormat('en-US').format(now);
+    // labelDate.textContent = new Intl.DateTimeFormat('ar-SY').format(now);
+    labelDate.textContent = new Intl.DateTimeFormat(
+      currentAccount.locale,
+      options
+    ).format(now);
+
     // Clear input fields
 
     containerApp.style.opacity = '100';
