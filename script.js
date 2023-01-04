@@ -201,6 +201,26 @@
 // const days2 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 4));
 // console.log(days2);
 
+// Internationalizing numbers
+// const num = 3698456.23;
+
+// const options = {
+//   style: 'currency', //percent//unit
+//   unit: 'celsius', //mile-per-hour
+//   currency: 'EUR', //"UAH"
+//   // useGrouping:false
+// };
+
+// console.log('US', new Intl.NumberFormat('en-US', options).format(num)); //US //€//3,698,456.23 mph
+// console.log('Ukraine', new Intl.NumberFormat('uk-UA', options).format(num)); //Ukraine 3 698 456,23 EUR//°C// милі/год
+// console.log('German', new Intl.NumberFormat('de-DE', options).format(num)); //German 3.698.456,23 €//°C // mi/h
+// console.log('Syria   ', new Intl.NumberFormat('ar-SY', options).format(num)); //Syria    ٣٬٦٩٨٬٤٥٦٫٢٣ ميل/س
+
+// console.log(
+//   navigator.language,
+//   new Intl.NumberFormat(navigator.language, options).format(num)
+// ); //pl-PL 3 698 456,23 C //mili/h
+
 /////////////////////////////////////////////////
 
 // BANKIST APP
@@ -537,14 +557,16 @@ btnLoan.addEventListener('click', e => {
   const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    // Add movement
-    currentAccount.movements.push(amount);
+    setTimeout(() => {
+      // Add movement
+      currentAccount.movements.push(amount);
 
-    // Add loan date
-    currentAccount.movementsDates.push(new Date().toISOString());
+      // Add loan date
+      currentAccount.movementsDates.push(new Date().toISOString());
 
-    // Update UI
-    updateUI(currentAccount);
+      // Update UI
+      updateUI(currentAccount);
+    }, 2500);
   } else {
     alert(
       `${currentAccount.owner}! Your loan request is bigger than you can get. Please try again with a smaller amount`
@@ -585,22 +607,40 @@ btnSort.addEventListener('click', e => {
 
 // //////////////////////////////////////////////////////////////
 ///////////////////////////////////
-// Internationalizing numbers
-const num = 3698456.23;
+//
+///////////////////////////////////
+// Timers
 
-const options = {
-  style: 'currency', //percent//unit
-  unit: 'celsius', //mile-per-hour
-  currency: 'EUR', //"UAH"
-  // useGrouping:false
-};
+// SetTimeout
+const ingredients = ['olives', 'spinach'];
 
-console.log('US', new Intl.NumberFormat('en-US', options).format(num)); //US //€//3,698,456.23 mph
-console.log('Ukraine', new Intl.NumberFormat('uk-UA', options).format(num)); //Ukraine 3 698 456,23 EUR//°C// милі/год
-console.log('German', new Intl.NumberFormat('de-DE', options).format(num)); //German 3.698.456,23 €//°C // mi/h
-console.log('Syria   ', new Intl.NumberFormat('ar-SY', options).format(num)); //Syria    ٣٬٦٩٨٬٤٥٦٫٢٣ ميل/س
+const pizzaTimer = setTimeout(
+  (ing1, ing2) => console.log('Here is your pizza' + ` ${ing2} ${ing1}`),
+  3000,
+  ...ingredients
+);
 
-console.log(
-  navigator.language,
-  new Intl.NumberFormat(navigator.language, options).format(num)
-); //pl-PL 3 698 456,23 C //mili/h
+if (ingredients.includes('spinach')) clearTimeout(pizzaTimer);
+
+// SetInterwal
+// My first solution:
+
+// setInterval(() => {
+//   const now = new Date();
+//   console.log(`${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`);
+// }, 1000);
+
+// My second solution
+
+setInterval(() => {
+  const now = new Date();
+  const options = {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  };
+  const time = new Intl.DateTimeFormat(currentAccount.locale, options).format(
+    now
+  );
+  console.log(time);
+}, 1000);
